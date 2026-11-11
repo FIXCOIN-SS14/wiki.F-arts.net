@@ -413,3 +413,31 @@ h2.in { background-size: 100% 2px; }
 .no-glitch .noise, .no-glitch .scan, .no-glitch .rift, .no-glitch .fx-layer { display: none; }
 .no-glitch .glitchy::before, .no-glitch .glitchy::after { display: none; }
 .no-glitch .logo-mark, .no-glitch .tag-soon { animation: none; }
+
+/* =====================================================
+   ДРУГИЕ РЕАЛЬНОСТИ — на пару секунд меняются шрифты и фон
+   (включает и выключает glitch.js через класс на <body>)
+   ===================================================== */
+
+/* Реальность 1: «терминал». Моноширинный шрифт, жёлтый фон, мелкая сетка */
+body.reality-1 { --font-head: "IBM Plex Mono", "Courier New", monospace; --font-body: "IBM Plex Mono", "Courier New", monospace; }
+body.reality-1 .bg i:nth-child(1) { background: var(--yellow); opacity: .22; }
+body.reality-1 .bg i:nth-child(2) { background: var(--blue); opacity: .2; }
+body.reality-1 .bg i:nth-child(3) { background: var(--gray-500); opacity: .25; }
+body.reality-1 .bg::after { background-size: 22px 22px; opacity: .7; }
+
+/* Реальность 2: «печать». Шрифт с засечками, розовый фон без сетки */
+body.reality-2 { --font-head: "Playfair Display", Georgia, serif; --font-body: "Playfair Display", Georgia, serif; background: #140a10; }
+body.reality-2 .bg i:nth-child(1) { background: var(--pink); opacity: .34; }
+body.reality-2 .bg i:nth-child(2) { background: var(--pink); opacity: .2; }
+body.reality-2 .bg i:nth-child(3) { background: var(--yellow); opacity: .16; }
+body.reality-2 .bg::after { opacity: 0; }
+
+/* Реальность 3: «сломанная». Глитч-шрифт в заголовках, серый фон, наклонённая сетка */
+body.reality-3 { --font-head: "Rubik Glitch", "Unbounded", sans-serif; background: #0c0c10; }
+body.reality-3 h1, body.reality-3 h2, body.reality-3 .logo { font-weight: 400; letter-spacing: .03em; }
+body.reality-3 .bg { transform: rotate(-4deg) scale(1.25); }
+body.reality-3 .bg i:nth-child(1) { background: var(--gray-300); opacity: .16; }
+body.reality-3 .bg i:nth-child(2) { background: var(--gray-500); opacity: .3; }
+body.reality-3 .bg i:nth-child(3) { background: var(--blue); opacity: .18; }
+body.reality-3 .bg::after { background-size: 90px 90px; opacity: .7; }
