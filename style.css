@@ -271,3 +271,145 @@ a.card:hover::before { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* =====================================================
+   ГЛИТЧИ — «разрыв реальностей» (скрипт: glitch.js)
+   ===================================================== */
+
+/* Слои поверх страницы: ни один не мешает кликам */
+.fx-layer { position: fixed; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
+.noise, .scan { position: fixed; inset: 0; pointer-events: none; }
+
+/* Цифровой шум: картинка с зерном, которая дёргается ступеньками */
+.noise {
+  z-index: 45; opacity: .05; transition: opacity .1s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: noiseMove .5s steps(5) infinite;
+}
+.hot .noise { opacity: .16; }
+@keyframes noiseMove {
+  20% { background-position: -40px 30px; } 40% { background-position: 60px -50px; }
+  60% { background-position: -70px -20px; } 80% { background-position: 30px 70px; }
+}
+
+/* Строки развёртки и светлая полоса, которая ползёт вниз */
+.scan { z-index: 44; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .12) 0 1px, transparent 1px 3px); }
+.scan::after {
+  content: ""; position: absolute; left: 0; right: 0; top: -18vh; height: 18vh;
+  background: linear-gradient(transparent, rgba(122, 165, 255, .07), transparent);
+  animation: roll 7s linear infinite;
+}
+@keyframes roll { to { transform: translateY(130vh); } }
+
+/* Разрыв реальности: сквозь щель цвета «перевёрнуты» */
+.rift {
+  position: fixed; top: 0; bottom: 0; width: 120px; z-index: 42; pointer-events: none; opacity: 0;
+  -webkit-backdrop-filter: hue-rotate(160deg) saturate(2.5) invert(.35);
+  backdrop-filter: hue-rotate(160deg) saturate(2.5) invert(.35);
+  background: linear-gradient(90deg, rgba(255, 79, 163, .5), rgba(61, 123, 255, .3), rgba(255, 210, 63, .4));
+}
+.rift.open { animation: riftOpen 1.5s var(--ease); }
+@keyframes riftOpen {
+  0% { opacity: 1; transform: scaleX(0); } 25% { opacity: 1; transform: scaleX(1); }
+  70% { opacity: 1; transform: scaleX(.8); } 100% { opacity: 0; transform: scaleX(0); }
+}
+
+/* Цветные полосы-«разрывы» кадра */
+.bar { position: absolute; left: 0; right: 0; opacity: .35; mix-blend-mode: screen; animation: barShift .36s steps(4); }
+@keyframes barShift {
+  30% { transform: translateX(var(--dx)); } 60% { transform: translateX(calc(var(--dx) * -1)); }
+  100% { opacity: 0; }
+}
+
+/* Дёргается вся страница: сдвиг, наклон и RGB-расслоение */
+main.tear {
+  animation: tear .36s steps(1);
+  filter: drop-shadow(5px 0 0 rgba(255, 79, 163, .7)) drop-shadow(-5px 0 0 rgba(61, 123, 255, .7));
+}
+@keyframes tear {
+  0% { transform: translate(-6px, 0) skewX(4deg); } 25% { transform: translate(8px, 2px) skewX(-6deg); }
+  50% { transform: translate(-3px, -2px); } 75% { transform: translate(5px, 0) skewX(3deg); } 100% { transform: none; }
+}
+
+/* Подпись у разрыва */
+.ghost {
+  position: absolute; white-space: nowrap; font: 700 13px var(--font-head); color: var(--yellow);
+  text-shadow: 2px 0 var(--pink), -2px 0 var(--blue); animation: ghostIn 1.6s steps(12) forwards;
+}
+@keyframes ghostIn {
+  0% { opacity: 0; } 10%, 70% { opacity: 1; } 20% { transform: translateX(-4px); }
+  35% { transform: translateX(5px); } 100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Следы курсора и плывущий мусор */
+.trail { position: absolute; width: 8px; height: 8px; margin: -4px; animation: trail .6s steps(5) forwards; }
+@keyframes trail { to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(.2) rotate(90deg); } }
+.debris { position: absolute; bottom: -12px; width: var(--s); height: var(--s); opacity: .35; animation: float var(--t) linear var(--d) infinite; }
+@keyframes float { 50% { transform: translate(18px, -50vh) rotate(180deg); } 100% { transform: translate(-12px, -110vh) rotate(360deg); opacity: 0; } }
+
+/* Заголовки: розовый и синий слои «съезжают» по полоскам */
+.glitchy { position: relative; }
+.logo span.glitchy { display: inline-block; white-space: nowrap; }
+.glitchy::before, .glitchy::after {
+  content: attr(data-text); position: absolute; left: 0; right: 0; top: 0; opacity: 0; pointer-events: none;
+}
+.glitching::before { opacity: 1; color: var(--pink); animation: slice1 .36s steps(2); }
+.glitching::after { opacity: 1; color: var(--blue); animation: slice2 .36s steps(2); }
+@keyframes slice1 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(-4px, 0); } 33% { clip-path: inset(55% 0 10% 0); transform: translate(5px, 0); }
+  66% { clip-path: inset(30% 0 40% 0); transform: translate(-3px, 1px); } 100% { clip-path: inset(75% 0 5% 0); transform: translate(4px, 0); }
+}
+@keyframes slice2 {
+  0% { clip-path: inset(60% 0 10% 0); transform: translate(4px, 0); } 33% { clip-path: inset(5% 0 70% 0); transform: translate(-5px, 0); }
+  66% { clip-path: inset(45% 0 25% 0); transform: translate(3px, -1px); } 100% { clip-path: inset(15% 0 65% 0); transform: translate(-4px, 0); }
+}
+
+/* Порча текста */
+.corrupt { color: var(--pink); text-shadow: 2px 0 var(--blue); }
+.ch.bad { color: var(--yellow) !important; transform: translateX(4px) skewX(-12deg); text-shadow: -3px 0 var(--pink), 3px 0 var(--blue); }
+
+/* Появление блоков: «материализация» ступеньками. Линия под h2 прорисовывается */
+.reveal { opacity: 0; }
+.reveal.in { opacity: 1; animation: materialize .7s steps(7) calc(var(--n, 0) * 110ms) backwards; }
+@keyframes materialize {
+  0% { clip-path: inset(0 100% 0 0); filter: hue-rotate(90deg) blur(3px); }
+  50% { clip-path: inset(0 30% 0 0); transform: translateX(-6px); }
+  100% { clip-path: inset(0); filter: none; }
+}
+h2 {
+  background-image: linear-gradient(90deg, var(--blue), var(--pink), var(--yellow));
+  background-repeat: no-repeat; background-position: left bottom; background-origin: border-box;
+  background-size: 0 2px; transition: background-size .9s var(--ease) .3s;
+}
+h2.in { background-size: 100% 2px; }
+
+/* Мелкие «живые» детали */
+@keyframes chroma {
+  0%, 100% { text-shadow: none; } 30% { text-shadow: 2px 0 var(--pink), -2px 0 var(--blue); }
+  60% { text-shadow: -2px 0 var(--pink), 2px 0 var(--blue); }
+}
+.nav-link:hover { animation: chroma .4s steps(3); }
+.btn-tg:hover { animation: chroma .3s steps(3); }
+@keyframes markGlitch {
+  0%, 92%, 100% { box-shadow: none; filter: none; }
+  93% { box-shadow: -5px 0 var(--pink), 5px 0 var(--yellow); filter: hue-rotate(90deg); }
+  96% { box-shadow: 5px 0 var(--blue), -5px 0 var(--pink); }
+}
+.logo-mark { animation: markGlitch 6s steps(1) infinite; }
+@keyframes flicker { 0%, 94%, 100% { opacity: 1; } 95% { opacity: .5; } 96% { opacity: 1; } 97% { opacity: .65; } }
+.tag-soon { animation: flicker 6s steps(1) infinite; }
+
+/* Кнопка выключения глитчей */
+.btn-glitch {
+  height: 36px; padding: 0 14px; border-radius: 99px; cursor: pointer;
+  border: 1px solid var(--gray-700); background: var(--gray-900); color: var(--gray-300);
+  font: 700 13px var(--font-body); transition: color .2s, border-color .2s;
+}
+.btn-glitch:hover { color: var(--pink); border-color: var(--pink); }
+.btn-glitch[hidden] { display: none; }
+@media (max-width: 860px) { .btn-glitch { padding: 0 10px; font-size: 12px; } }
+
+/* Глитчи выключены кнопкой */
+.no-glitch .noise, .no-glitch .scan, .no-glitch .rift, .no-glitch .fx-layer { display: none; }
+.no-glitch .glitchy::before, .no-glitch .glitchy::after { display: none; }
+.no-glitch .logo-mark, .no-glitch .tag-soon { animation: none; }

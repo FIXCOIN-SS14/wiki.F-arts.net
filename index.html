@@ -16,6 +16,12 @@
   <!-- Фон: три размытых пятна + сетка -->
   <div class="bg"><i></i><i></i><i></i></div>
 
+  <!-- Слои глитчей: шум, строки развёртки, разрыв, частицы -->
+  <div class="noise"></div>
+  <div class="scan"></div>
+  <div class="rift" id="rift"></div>
+  <div class="fx-layer" id="fxLayer"></div>
+
   <!-- Верхняя панель -->
   <header class="topbar">
     <button class="burger" aria-label="Открыть меню"><span></span></button>
@@ -26,6 +32,7 @@
       <div id="results" class="results" hidden></div>
     </div>
 
+    <button class="btn-glitch" id="glitchBtn" aria-pressed="true" title="Включить или выключить глитчи">Глитчи: вкл</button>
     <a class="btn-tg" id="tgBtn" target="_blank" rel="noopener">Telegram</a>
   </header>
 
@@ -45,5 +52,6 @@
 
   <script src="pages.js"></script>
   <script src="app.js"></script>
+  <script src="glitch.js"></script>
 </body>
 </html>
