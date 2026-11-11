@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вики</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Полоска прогресса прокрутки -->
+  <div class="scroll-bar"></div>
+
+  <!-- Фон: три размытых пятна + сетка -->
+  <div class="bg"><i></i><i></i><i></i></div>
+
+  <!-- Верхняя панель -->
+  <header class="topbar">
+    <button class="burger" aria-label="Открыть меню"><span></span></button>
+    <a class="logo" href="#/home"><b class="logo-mark"></b><span id="siteName"></span></a>
+
+    <div class="search">
+      <input id="search" type="search" placeholder="Поиск по вики (Ctrl+K)" autocomplete="off">
+      <div id="results" class="results" hidden></div>
+    </div>
+
+    <a class="btn-tg" id="tgBtn" target="_blank" rel="noopener">Telegram</a>
+  </header>
+
+  <!-- Три колонки: меню — страница — оглавление -->
+  <div class="layout">
+    <aside class="sidebar"><nav id="nav"></nav></aside>
+
+    <main>
+      <article id="content"></article>
+      <footer class="footer" id="footer"></footer>
+    </main>
+
+    <aside class="toc-wrap"><div id="toc"></div></aside>
+  </div>
+
+  <div class="overlay"></div>
+
+  <script src="pages.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
