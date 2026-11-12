@@ -533,7 +533,7 @@ dl { margin: 0; }
 
 /* Фото, приклеенное скотчем */
 .photo {
-  position: relative; align-self: start; margin: 0; padding: 8px 8px 6px; background: #f1efe6;
+  position: relative; align-self: start; width: 100%; max-width: 140px; margin: 0; padding: 8px 8px 6px; background: #f1efe6;
   border: 1px solid rgba(0, 0, 0, .2); box-shadow: 0 6px 14px rgba(0, 0, 0, .35);
   transform: rotate(2.2deg); transition: transform .4s var(--ease);
 }
