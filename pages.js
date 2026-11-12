@@ -28,8 +28,8 @@ const PAGES = {
         <h1 class="hero-title" data-split>Вики в разработке</h1>
         <p class="lead">Здесь будут собраны статьи, персонажи и всё остальное
         по проекту. Пока страниц мало, но мы работаем над этим.</p>
-        <div class="progress"><span style="--p:15%"></span></div>
-        <p class="muted">Готовность вики: 15%</p>
+        <div class="progress"><span style="--p:30%"></span></div>
+        <p class="muted">Готовность вики: 30%</p>
       </section>
 
       <h2>Разделы</h2>
@@ -39,10 +39,15 @@ const PAGES = {
           <h3>О проекте</h3>
           <p>Что это за вики и зачем она нужна.</p>
         </a>
+        <a class="card" href="#/worlds">
+          <span class="tag tag-ready">первое дело</span>
+          <h3>Миры</h3>
+          <p>Досье на известные миры и их аномалии.</p>
+        </a>
         <a class="card" href="#/characters">
-          <span class="tag tag-soon">не готово</span>
+          <span class="tag tag-ready">первое дело</span>
           <h3>Персонажи</h3>
-          <p>Список героев и их описания.</p>
+          <p>Досье на героев: фото, возраст, чем занимаются.</p>
         </a>
         <a class="card" href="#/help">
           <span class="tag tag-ready">готово</span>
@@ -83,20 +88,16 @@ const PAGES = {
       <p>Вопросы и предложения — в Telegram-канале проекта.</p>`
   },
 
+  worlds: {
+    title: "Миры",
+    group: "Материалы",
+    html: worldsPage()
+  },
+
   characters: {
     title: "Персонажи",
     group: "Материалы",
-    soon: true,
-    html: `
-      <div class="callout warn"><b>Не готово.</b> Эта страница пока в работе.
-      Персонажи появятся здесь позже.</div>
-
-      <h2>Скоро здесь</h2>
-      <div class="cards">
-        <div class="card skeleton"><i class="sk round"></i><i class="sk"></i><i class="sk short"></i></div>
-        <div class="card skeleton"><i class="sk round"></i><i class="sk"></i><i class="sk short"></i></div>
-        <div class="card skeleton"><i class="sk round"></i><i class="sk"></i><i class="sk short"></i></div>
-      </div>`
+    html: charactersPage()
   },
 
   help: {
@@ -121,6 +122,14 @@ const PAGES = {
     title: "Журнал изменений",
     group: "Проект",
     html: `
+      <h2>Версия 0.4</h2>
+      <p class="muted">12.11.2026</p>
+      <ul>
+        <li>Страницы «Миры» и «Персонажи» стали досье: папки, фото, штампы.</li>
+        <li>Добавлен первый мир и первый персонаж.</li>
+        <li>Редкий глитч «синий экран».</li>
+      </ul>
+
       <h2>Версия 0.3</h2>
       <p class="muted">11.11.2026</p>
       <ul>

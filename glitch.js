@@ -162,6 +162,53 @@ async function refont() {
   el.style.fontFamily = "";
 }
 
+/* ---------- 4в. Синий экран: редкий сюрприз ---------- */
+const BSOD_CHANCE = 0.1;   // шанс при каждой проверке (проверка раз в 20–40 секунд)
+let bsodActive = false;
+async function bsod() {
+  if (!enabled || bsodActive || document.hidden) return;
+  bsodActive = true;
+
+  const screen = document.createElement("div");
+  screen.className = "bsod";
+  screen.setAttribute("aria-hidden", "true");
+  screen.innerHTML = `<div class="bsod-in">
+    <div class="sad">:(</div>
+    <p>На вашем ПК возникла проблема, и его необходимо перезагрузить. Мы лишь собираем некоторые сведения об ошибке, а затем будет выполнена перезагрузка.</p>
+    <p><span class="pct">0</span>% завершено</p>
+    <div class="bsod-foot"><i class="qr"></i><div>
+      Дополнительные сведения об этой проблеме и возможных способах ее решения см. на сайте https://www.windows.com/stopcode<br><br>
+      Если вы позвоните в службу поддержки, сообщите им следующие данные:<br>Код остановки: REALITY_RIFT_EXCEPTION
+    </div></div>
+    <small>Кликните или нажмите любую клавишу, чтобы закрыть</small></div>`;
+
+  // Закрытие: экран гаснет («перезагрузка»), потом помехи — и всё как раньше
+  let closing = false;
+  const close = async () => {
+    if (closing) return;
+    closing = true;
+    removeEventListener("keydown", close);
+    screen.classList.add("black");
+    await wait(450);
+    screen.remove();
+    bsodActive = false;
+    burst();
+  };
+  screen.addEventListener("click", close);
+  addEventListener("keydown", close);
+  document.body.append(screen);
+
+  // Проценты «сбора сведений»
+  const pct = $(".pct", screen);
+  for (let p = 0; p < 100 && !closing; p += Math.floor(rand(3, 14))) {
+    pct.textContent = p;
+    await wait(rand(120, 380));
+  }
+  pct.textContent = 100;
+  await wait(400);
+  close();
+}
+
 /* ---------- 5. Следы от курсора ---------- */
 let lastTrail = 0;
 addEventListener("pointermove", e => {
@@ -196,7 +243,7 @@ function onPage() {
   $$("h1, h2", content).forEach(h => { h.classList.add("glitchy"); h.dataset.text = h.textContent; });
 
   // Блоки появляются «материализацией»
-  $$("h2, .card, .callout, .progress", content).forEach((el, i) => {
+  $$("h2, .card, .callout, .progress, .folder", content).forEach((el, i) => {
     el.classList.add("reveal");
     el.style.setProperty("--n", i % 4);
     revealer.observe(el);
@@ -218,6 +265,7 @@ every(burst, 6000, 12000);
 every(openRift, 11000, 20000);
 every(shiftReality, 14000, 28000);
 every(refont, 3500, 7000);
+every(() => { if (Math.random() < BSOD_CHANCE) bsod(); }, 20000, 40000);
 
 /* ---------- 10. Запуск ---------- */
 const logoText = $(".logo span");

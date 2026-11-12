@@ -1,0 +1,109 @@
+/* =====================================================
+   ДОСЬЕ: миры и персонажи.
+   Чтобы добавить запись, скопируйте блок в списке ниже и поменяйте текст.
+   Фото: положите картинку в папку img/ рядом с index.html и укажите путь,
+   например  photo: "img/fixcoin.jpg"  (пустая строка — будет заглушка).
+   Подключается раньше pages.js.
+   ===================================================== */
+
+const WORLDS = [
+  {
+    number: 1,
+    name: "Земля №2841-Р23",
+    photo: "",
+    fields: [
+      ["Эпоха", "2017 год"]
+    ],
+    anomaly: "В мире происходят случаи неизвестной пропажи людей. Никто не знает, куда они деваются."
+  }
+];
+
+const CHARACTERS = [
+  {
+    nick: "Fix!coin",
+    world: 1,                       // номер мира из списка WORLDS
+    photo: "",
+    fields: [
+      ["Возраст", "17 лет"],
+      ["Пол", "мужской"],
+      ["Ориентация", "аромантик"],
+      ["Хобби", "программирование и попытки научиться рисовать"],
+      ["Чем занимается", "Самый обычный студент 2 курса"]
+    ]
+  }
+];
+
+/* =====================================================
+   Сборка страниц «Миры» и «Персонажи» (трогать не нужно)
+   ===================================================== */
+
+const dossierPad = n => String(n).padStart(4, "0");
+
+// Фото в рамке со скрепкой; без файла — силуэт (или планета для мира)
+function dossierPhoto(photo, caption, kind) {
+  const pic = photo
+    ? `<img src="${photo}" alt="${caption}">`
+    : '<span class="nophoto">фото отсутствует</span>';
+  return `<figure class="photo"><span class="clip"></span>
+    <div class="pic ${kind}">${pic}</div><figcaption>${caption}</figcaption></figure>`;
+}
+
+// Строки «название — значение»; --k задаёт задержку появления
+function dossierRows(fields) {
+  return `<dl>` + fields.map(([key, value], i) =>
+    `<div class="row" style="--k:${i}"><dt>${key}</dt><dd>${value}</dd></div>`
+  ).join("") + `</dl>`;
+}
+
+// Одна папка: заголовок (summary) и раскрывающееся дело
+function dossierFolder({ code, title, tag, photo, kind, stamp, body, open }) {
+  return `<details class="folder"${open ? " open" : ""}>
+    <summary><i class="folder-ico"></i>
+      <span class="f-title"><small>Дело ${code}</small>${title}</span>${tag}</summary>
+    <div class="file">
+      ${dossierPhoto(photo, title, kind)}
+      <div class="info"><span class="stamp">${stamp}</span>${body}</div>
+    </div></details>`;
+}
+
+function worldsPage() {
+  return `<p class="lead">Известные миры. Нажмите на папку, чтобы открыть дело.</p>
+    <h2>Открытые дела</h2>` +
+    WORLDS.map((w, i) => dossierFolder({
+      code: "М-" + dossierPad(w.number),
+      title: `Мир №${w.number}: ${w.name}`,
+      tag: '<i class="tag tag-ready">изучается</i>',
+      photo: w.photo, kind: "world", stamp: "Аномалия", open: i === 0,
+      body: dossierRows(w.fields) +
+        `<div class="anomaly"><b>Аномалии</b><p>${w.anomaly}</p></div>` +
+        `<p class="muted">Персонажи мира: ` +
+        (CHARACTERS.filter(c => c.world === w.number)
+          .map(c => `<a href="#/characters">${c.nick}</a>`).join(", ") || "неизвестно") + `</p>`
+    })).join("");
+}
+
+function charactersPage() {
+  const world = n => WORLDS.find(w => w.number === n);
+  const open = CHARACTERS.map((c, i) => dossierFolder({
+    code: "П-" + dossierPad(i + 1),
+    title: c.nick,
+    tag: `<i class="tag tag-ready">Мир №${c.world}</i>`,
+    photo: c.photo, kind: "person", stamp: "Секретно", open: i === 0,
+    body: dossierRows([
+      ["Мир", `<a href="#/worlds">Мир №${c.world}${world(c.world) ? ": " + world(c.world).name : ""}</a>`],
+      ...c.fields
+    ])
+  })).join("");
+
+  // Заглушки для будущих дел
+  const hidden = [CHARACTERS.length + 1, CHARACTERS.length + 2].map(n =>
+    `<div class="folder locked"><div class="lock-row"><i class="folder-ico"></i>
+      <span class="f-title"><small>Дело П-${dossierPad(n)}</small>
+      <span class="bars">${"\u00a0".repeat(12)}</span></span>
+      <i class="tag tag-soon">засекречено</i></div></div>`).join("");
+
+  return `<div class="callout warn"><b>Раздел не завершён.</b> Пока открыто одно досье,
+    остальные появятся позже.</div>
+    <h2>Открытые дела</h2>${open}
+    <h2>Засекреченные дела</h2>${hidden}`;
+}
