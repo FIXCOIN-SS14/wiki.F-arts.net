@@ -443,74 +443,133 @@ body.reality-3 .bg i:nth-child(3) { background: var(--blue); opacity: .18; }
 body.reality-3 .bg::after { background-size: 90px 90px; opacity: .7; }
 
 /* =====================================================
-   ДОСЬЕ: папки, фото, штампы (данные — data.js)
+   ДОСЬЕ: архивные папки, листы на машинке (данные — data.js)
    ===================================================== */
-.folder { margin-bottom: 14px; overflow: hidden; background: var(--gray-900); border: 1px solid var(--gray-700); border-radius: 14px; transition: border-color .3s; }
-.folder[open] { border-color: var(--yellow); }
-.folder summary, .lock-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; list-style: none; cursor: pointer; }
-.folder summary::-webkit-details-marker { display: none; }
-.folder summary:hover { background: var(--gray-800); }
-.folder summary::after { content: "▸"; color: var(--gray-500); transition: transform .3s var(--ease), color .3s; }
-.folder[open] summary::after { color: var(--yellow); transform: rotate(90deg); }
-.f-title { flex: 1; font: 700 1.05rem/1.3 var(--font-head); }
-.f-title small { display: block; font: 500 12px var(--font-body); color: var(--gray-500); }
 
-/* Значок папки: «створка» откидывается при открытии */
-.folder-ico { position: relative; flex: none; width: 36px; height: 26px; margin-top: 5px; background: var(--yellow); border-radius: 3px 6px 6px 6px; }
-.folder-ico::before { content: ""; position: absolute; left: 0; top: -5px; width: 15px; height: 7px; background: var(--yellow); border-radius: 3px 4px 0 0; }
-.folder-ico::after { content: ""; position: absolute; inset: 3px 0 0; background: rgba(0, 0, 0, .28); border-radius: 2px 5px 5px 5px; transform-origin: bottom; transition: transform .4s var(--ease); }
-.folder[open] .folder-ico::after { transform: perspective(80px) rotateX(-38deg); }
-
-/* Раскрытое дело */
-.file { display: grid; grid-template-columns: 190px 1fr; gap: 24px; padding: 8px 22px 24px; animation: fileIn .5s var(--ease); }
-@keyframes fileIn { from { opacity: 0; transform: translateY(-10px); } }
-.info { min-width: 0; padding-top: 6px; }
-dl { margin: 0; }
-.row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--gray-700); }
-.folder[open] .row { animation: rowIn .45s var(--ease) calc(var(--k, 0) * 70ms + .2s) backwards; }
-@keyframes rowIn { from { opacity: 0; transform: translateX(-14px); } }
-.row dt { font-size: 14px; color: var(--gray-500); }
-.row dd { margin: 0; }
-
-/* Штамп: «впечатывается» при открытии */
-.stamp {
-  display: inline-block; margin-bottom: 10px; padding: 2px 12px; border: 3px solid var(--pink); border-radius: 6px;
-  color: var(--pink); font: 700 14px var(--font-head); letter-spacing: .1em; text-transform: uppercase;
-  transform: rotate(-3deg); opacity: .9;
+/* Папка: картонный корешок с язычком, на язычке номер дела */
+.folder {
+  --manila: #cdae52; --manila-dark: #8c7226; --paper: #ebe5d1; --ink: #1c1a14; --stamp: #d02a7c;
+  position: relative; margin: 38px 0 18px;
+  background: linear-gradient(var(--manila), #bf9f45);
+  border: 1px solid var(--manila-dark); border-radius: 2px 10px 10px 10px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .5);
 }
-.folder[open] .stamp { animation: stampIn .5s cubic-bezier(.3, 1.6, .5, 1) .35s backwards; }
-@keyframes stampIn { from { opacity: 0; transform: rotate(-3deg) scale(2.4); } }
+.folder::before {
+  content: attr(data-code); position: absolute; left: 22px; top: -27px; height: 27px; padding: 0 18px;
+  background: var(--manila); border: 1px solid var(--manila-dark); border-bottom: 0; border-radius: 9px 9px 0 0;
+  box-shadow: 0 2px 0 var(--manila);
+  color: var(--ink); font: 700 13px/27px "PT Mono", "Courier New", monospace; letter-spacing: .08em;
+}
+.folder summary, .lock-row { display: flex; align-items: center; gap: 14px; padding: 16px 20px; list-style: none; cursor: pointer; }
+.folder summary::-webkit-details-marker { display: none; }
+.folder summary:hover { background: rgba(255, 255, 255, .1); }
+.folder summary::after { content: "▸"; color: #3a300f; transition: transform .3s var(--ease); }
+.folder[open] summary::after { transform: rotate(90deg); }
 
-/* Особая отметка про аномалии */
-.anomaly { margin: 14px 0; padding: 12px 16px; border: 1px solid rgba(255, 210, 63, .4); border-radius: 10px; background: repeating-linear-gradient(-45deg, rgba(255, 210, 63, .1) 0 10px, rgba(255, 210, 63, .04) 10px 20px); animation: flicker 5s steps(1) infinite; }
-.anomaly b { color: var(--yellow); }
-.anomaly p { margin: 4px 0 0; }
+/* Бумажная наклейка с названием дела */
+.f-title {
+  display: inline-block; padding: 8px 16px; background: var(--paper); color: var(--ink);
+  font: 700 1rem/1.35 "PT Mono", "Courier New", monospace;
+  transform: rotate(-.7deg); box-shadow: 0 2px 4px rgba(0, 0, 0, .35);
+}
+.f-title small { display: block; font-size: 11px; font-weight: 400; letter-spacing: .1em; color: #5a5646; }
+.folder .tag { margin-left: auto; }
+.folder .tag-ready { background: #1f48b8; color: #fff; }
+.folder .tag-soon { background: #000; color: var(--yellow); }
+.folder-ico { display: none; }
 
-/* Фото в рамке со скрепкой */
-.photo { position: relative; align-self: start; margin: 0; padding: 10px 10px 8px; background: var(--gray-800); border: 1px solid var(--gray-700); border-radius: 6px; transform: rotate(-2deg); transition: transform .4s var(--ease); }
+/* Два листа: нижний торчит из-под верхнего, верхний вставлен криво */
+.file { position: relative; margin: 6px 18px 28px; animation: fileIn .5s var(--ease); }
+@keyframes fileIn { from { opacity: 0; transform: translateY(-10px); } }
+.file::before {
+  content: ""; position: absolute; inset: 8px -8px -10px 12px; background: #d4ccb2;
+  transform: rotate(2.2deg); box-shadow: 0 8px 18px rgba(0, 0, 0, .35);
+}
+.sheet {
+  position: relative; display: grid; grid-template-columns: 190px 1fr; gap: 24px; padding: 34px 28px 30px;
+  background-color: var(--paper); color: var(--ink); font-family: "PT Mono", "Courier New", monospace;
+  background-image:
+    radial-gradient(circle at 90% 84%, transparent 0 34px, rgba(120, 80, 20, .14) 35px 38px, transparent 39px),
+    linear-gradient(transparent 31%, rgba(0, 0, 0, .09) 31.4%, transparent 32.4%),
+    linear-gradient(120deg, rgba(0, 0, 0, .05), transparent 25%, transparent 70%, rgba(0, 0, 0, .08));
+  transform: rotate(-1.1deg); box-shadow: 0 2px 0 rgba(0, 0, 0, .12), 0 10px 22px rgba(0, 0, 0, .35);
+}
+.sheet::before {          /* скрепка */
+  content: ""; position: absolute; top: -16px; right: 40px; z-index: 3; width: 20px; height: 58px;
+  border: 3px solid #9aa0b4; border-radius: 12px; border-top-color: #c3c8d8;
+}
+.sheet a { color: #1f48b8; }
+.sheet a:hover { color: var(--stamp); }
+.sheet .muted { color: #5a5646; }
+.info { min-width: 0; padding-top: 4px; }
+dl { margin: 0; }
+
+/* Строки анкеты: чуть сбитые, текст «допечатывается» */
+.row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px dotted rgba(0, 0, 0, .4); }
+.row:nth-child(odd) { transform: translateY(1px) rotate(.15deg); }
+.row:nth-child(even) { transform: translateY(-1px) rotate(-.12deg); }
+.row dt { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #5a5646; }
+.row dd { margin: 0; text-shadow: .4px 0 0 rgba(0, 0, 0, .45); }
+.folder[open] .row dd { animation: typed .8s steps(18) calc(var(--k, 0) * 160ms + .3s) backwards; }
+@keyframes typed { from { clip-path: inset(0 100% 0 0); } }
+
+/* Штамп */
+.stamp {
+  display: inline-block; margin-bottom: 14px; padding: 2px 12px; border: 3px solid var(--stamp); border-radius: 4px;
+  color: var(--stamp); font: 700 15px "PT Mono", monospace; letter-spacing: .14em; text-transform: uppercase;
+  transform: rotate(-4deg); opacity: .88; mix-blend-mode: multiply;
+}
+.folder[open] .stamp { animation: stampIn .5s cubic-bezier(.3, 1.6, .5, 1) .5s backwards; }
+@keyframes stampIn { from { opacity: 0; transform: rotate(-4deg) scale(2.4); } }
+
+/* Аномалии: жёлтый стикер, приклеенный наискосок */
+.anomaly {
+  margin: 18px 4px 14px 0; padding: 14px 18px 16px; background: var(--yellow); color: #1b1500; font-size: 14px;
+  transform: rotate(1.6deg); box-shadow: 0 6px 12px rgba(0, 0, 0, .3);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+}
+.anomaly b { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+.anomaly p { margin: 0; }
+
+/* Фото, приклеенное скотчем */
+.photo {
+  position: relative; align-self: start; margin: 0; padding: 8px 8px 6px; background: #f1efe6;
+  border: 1px solid rgba(0, 0, 0, .2); box-shadow: 0 6px 14px rgba(0, 0, 0, .35);
+  transform: rotate(2.2deg); transition: transform .4s var(--ease);
+}
 .photo:hover { transform: rotate(0) scale(1.03); }
-.photo .clip { position: absolute; top: -12px; left: 22px; z-index: 2; width: 18px; height: 44px; border: 3px solid var(--gray-300); border-radius: 10px; }
-.photo figcaption { margin-top: 8px; font-size: 12px; text-align: center; color: var(--gray-300); }
+.photo::before, .photo::after {
+  content: ""; position: absolute; top: -9px; width: 54px; height: 18px;
+  background: rgba(255, 210, 63, .78); box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+}
+.photo::before { left: -16px; transform: rotate(-38deg); }
+.photo::after { right: -16px; transform: rotate(38deg); }
+.photo figcaption { margin-top: 6px; font-size: 12px; line-height: 1.3; text-align: center; color: var(--ink); }
 .pic { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; }
-.pic.person { background: radial-gradient(circle at 50% 38%, var(--gray-500) 0 15%, transparent 16%), radial-gradient(ellipse at 50% 100%, var(--gray-500) 0 40%, transparent 41%), linear-gradient(var(--gray-700), var(--gray-900)); }
+.pic.person { background: radial-gradient(circle at 50% 38%, #8b8872 0 15%, transparent 16%), radial-gradient(ellipse at 50% 100%, #8b8872 0 40%, transparent 41%), linear-gradient(#b9b5a0, #8f8b78); }
 .pic.world { background: linear-gradient(var(--gray-700), var(--gray-900)); }
-.pic.world::before { content: ""; width: 64%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--blue-soft), var(--blue) 45%, #0b1b44 85%); animation: planet 3s ease-in-out infinite alternate; }
-@keyframes planet { from { box-shadow: 0 0 14px rgba(61, 123, 255, .3); } to { box-shadow: 0 0 40px rgba(61, 123, 255, .7); } }
-.pic img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.4) contrast(1.05); }
-.nophoto { position: absolute; left: 0; right: 0; bottom: 8px; font-size: 11px; letter-spacing: .12em; text-align: center; text-transform: uppercase; color: var(--gray-300); }
-.pic::after { content: ""; position: absolute; left: 0; right: 0; height: 30%; background: linear-gradient(transparent, rgba(122, 165, 255, .2), transparent); animation: picScan 3s linear infinite; }
-@keyframes picScan { from { top: -30%; } to { top: 100%; } }
+.pic.world::before { content: ""; width: 64%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--blue-soft), var(--blue) 45%, #0b1b44 85%); }
+.pic.has-img { aspect-ratio: 1; background: #000; }
+.pic.has-img::before { display: none; }
+.pic img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.8) contrast(1.05) sepia(.15); }
+.nophoto { position: absolute; left: 0; right: 0; bottom: 8px; font-size: 11px; letter-spacing: .12em; text-align: center; text-transform: uppercase; color: #3d3a2e; }
 .photo:hover .pic { animation: picGlitch .4s steps(3); }
 @keyframes picGlitch { 33% { transform: translateX(-3px); filter: drop-shadow(3px 0 var(--pink)) drop-shadow(-3px 0 var(--blue)); } 66% { transform: translateX(3px); } }
 
+/* Замазанное маркером имя */
+.smear { position: relative; display: inline-block; color: transparent; white-space: nowrap; user-select: none; }
+.smear::before, .smear::after { content: ""; position: absolute; background: #0a0a0c; }
+.smear::before { inset: -3px -8px -2px -5px; border-radius: 3px 14px 4px 12px / 12px 4px 14px 5px; transform: rotate(-1.4deg) skewX(-6deg); }
+.smear::after { inset: 35% -12px -6px -10px; border-radius: 12px 4px 10px 3px / 5px 12px 4px 10px; transform: rotate(1.8deg); opacity: .92; }
+
 /* Засекреченные дела */
-.locked { opacity: .75; }
+.locked { opacity: .85; }
 .lock-row { cursor: not-allowed; }
 .bars { display: inline-block; border-radius: 3px; background: #000; user-select: none; animation: flicker 4s steps(1) infinite; }
 
 @media (max-width: 700px) {
-  .file { grid-template-columns: 1fr; }
-  .photo { max-width: 200px; }
+  .sheet { grid-template-columns: 1fr; padding: 30px 20px 26px; }
+  .photo { max-width: 220px; }
   .row { grid-template-columns: 1fr; gap: 2px; }
 }
 
